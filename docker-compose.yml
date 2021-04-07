@@ -1,0 +1,18 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    volumes:
+     - ./dockercompose/mongo/data:/data/db
+    command: mongod  --logpath=/dev/null # --quiet
+    ports:
+      - "27017:27017"
+  performance-test-mongodb-server:
+    depends_on: [ "mongo"]
+    build: dockercompose/performance-test-java-mongodb
+    environment:
+      SPRING_DATA_MONGODB_URI: "mongodb://mongo:27017/test?serverSelectionTimeoutMS=2000&connectTimeoutMS=2000"
+    ports:
+     - "1400:1400"
+    volumes:
+     - ./dockercompose/performance-test-java-mongodb/app.jar:/home/app.jar
